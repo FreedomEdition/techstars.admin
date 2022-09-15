@@ -1,0 +1,344 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Save and load image from firebase</title>
+
+        <style>
+            img{height:540px; width:320px; border:2px solid black;}
+
+            .paymentlogo{
+				width:30px; height:30px;
+			}
+			
+			.productImg{
+				width:480px; 
+				height:320px;
+				background-image: url('images/r1b2.jpg');
+				background-position:center;
+				background-repeat:no-repeat;
+				background-size:cover;
+			}
+
+            .editText{height:10; font-size:16pt; width:200; border: 2px solid black; border-radius:10px; padding:20px; text-align:center}
+
+            table {
+                border: 0px solid #CCC;
+                border-collapse: collapse;
+            }
+
+            td {
+                border: none;
+                padding: 0;
+            }
+            
+        </style>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <script type="text/javascript" src="https://code.jquery.com/jquery-latest.min.js"></script>
+        <!--toast... -->
+        <link rel="stylesheet" href="https://unpkg.com/native-toast@2.0.0/dist/native-toast.css">
+        <script src="https://unpkg.com/native-toast@2.0.0/dist/native-toast.min.js"></script>
+
+
+        <!---------------------------------------FIREBASE LIBRARIES---------------------------------------------------->
+        <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-database.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-storage.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-auth.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    </head>
+
+    <body onload = "readData()">
+
+
+        <table class="table" id="table">
+            <tr>
+                <td></td>
+            </tr>   
+        </table>
+
+
+        <br></br>
+        <center><b>OR</b></center>
+        <center>
+            <div class="col-md-6">
+                <hr></hr>
+            </div>
+        </center>
+        
+        
+        <center><h4 style="margin-top:100px;">Juice <img class="img-fluid paymentlogo"src="images/juiceLogo.png"/></h4>
+        <p style="font-size:15pt;  margin-bottom:50px; padding:5px;">Transfer to 
+        <br>Mobile Number on: 51234567</br>
+        In juice payment description write <b>the product name</b>
+
+        <form>
+            <p style="font-size:16pt;"><b>Fill the form for juice:</b></p>
+            
+            <label for="fileselect" style="font-size:16pt;">First Name:</label>
+            <input id="id_firstname" class="editText"	maxlength="15" type="text"/></form>
+
+            <br><label for="fileselect" style="font-size:16pt;">Last name:</label>
+            <input id="id_lastname" class="editText"	maxlength="15" type="text"/></form></br>
+
+            <br><label for="fileselect" style="font-size:16pt;">Phone number:</label>
+            <input id="id_tel" class="editText"	maxlength="8" type="text"/></form></br>
+
+            <br><label for="fileselect" style="font-size:16pt;">Address:</label>
+            <input id="id_address" class="editText"	maxlength="15" type="text"/></form></br>
+
+            <br>
+            <p>Upload transaction juice with description here.</p>
+            <img id="myimg"> <label id="upProgress"></label></br>
+    
+
+            <br>
+            <button id="select">Select Image</button>
+            <button id="upload">Send</button></br>
+
+        </form>
+
+        </p></center>
+
+
+        <script id="MainScript">
+
+          //------------------------------------------VARIABLES---------------------------
+            var ImgName, ImgUrl;
+            var files = [];
+            var reader;
+            
+            var firstname;
+            var lastname;
+            var tel;
+            var address;
+
+            var id_number;
+
+         //------------------------------------------CONFIGURATIONS-----------------------
+            var firebaseConfig = {
+            apiKey: "AIzaSyCGTUrE0yLfeGdBbFdqjUOWIQC6QkNtshc",
+            authDomain: "freedom-web-testing.firebaseapp.com",
+            databaseURL: "https://freedom-web-testing-default-rtdb.firebaseio.com",
+            projectId: "freedom-web-testing",
+            storageBucket: "freedom-web-testing.appspot.com",
+            messagingSenderId: "703214718707",
+            appId: "1:703214718707:web:90c63071c0a7f75f887186",
+            measurementId: "G-HM10VPBF03"
+            };
+
+
+            // Initialize Firebase...
+            firebase.initializeApp(firebaseConfig);
+
+
+        //------------------------------------------SELECTION PROCESS-----------------------
+            document.getElementById("select").onclick = function(e){
+
+                var input = document.createElement('input');
+                input.type = 'file';
+
+                input.onchange = e =>{
+                    files = e.target.files;
+                    reader = new FileReader();
+                    reader.onload = function(){
+                        document.getElementById("myimg").src = reader.result;
+                    }
+                    reader.readAsDataURL(files[0]);
+                }
+                input.click();
+            }
+
+            //------------------------------------------UPLOAD PROCESS-----------------------
+                document.getElementById('upload').onclick = function(){
+                    firstname = document.getElementById("id_firstname").value;
+                    lastname = document.getElementById("id_lastname").value;
+                    tel = document.getElementById("id_tel").value;
+                    address = document.getElementById("id_address").value;
+
+                    var uploadTask = firebase.storage().ref('Images/' + ImgName + ".png").put(files[0]);
+
+
+                    uploadTask.on('state_changed', function(snapshot){
+                        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        document.getElementById('upProgress').innerHTML = 'Upload - ' + progress + '%';
+                    },
+                    
+                    function(error){
+                        alert('error in saving the image');
+                    },
+
+                    function(){
+                        uploadTask.snapshot.ref.getDownloadURL().then(function(url){
+                            ImgUrl = url;
+                        
+                            firebase.database().ref('Pictures/'+ id_number).set({
+                                FirstName: firstname,
+                                LastName: lastname,
+                                Tel: tel,
+                                Address: address,
+                                ID: id_number,
+                                Link: ImgUrl
+                            });
+
+                            firebase.database().ref('NUMBERS/ID_NUMBER').set({
+                                NUMBER: id_number
+                            });
+
+                
+                            nativeToast({
+                                message: 'Payment details was sent!',
+                                position: 'center',    
+                                rounded: true,
+                                timeout: 10000,
+                                type: '',
+                                icon: false,
+                                edge:true,
+                                closeOnClick: false,
+                                elements: [createElement()]
+                            });
+
+                            document.getElementById("id_firstname").value = " ";
+                            document.getElementById("id_lastname").value = " ";
+                            document.getElementById("id_tel").value = " ";
+                            document.getElementById("id_address").value = " ";
+                            document.getElementById('myimg').src = '//:0'
+
+
+                            }
+                         );
+                    });
+            }
+            
+            
+            //------------------------------------------LOAD ENTIRE DATABASE INTO A TABLE-----------------------
+
+            var itemsRef = firebase.database().ref().child("Pictures");
+            var tableBody = document.querySelector('#table tbody');
+
+            function readData() {
+
+                // #RETRIEVE ONLY EMAIL AS VALUE...
+                firebase.database().ref('NUMBERS/ID_NUMBER/NUMBER').on('value',(snap)=>{
+
+                    id_number = snap.val();
+                    id_number = id_number - 1
+
+                });  
+
+                //Start extracting and rendering of data here....
+                itemsRef.once('value', function (snapshot) {
+                    snapshot.forEach(function (item_snapshot) {
+                        
+                        //Adding rows...
+                        var receiptRow = document.createElement("tr");
+                        //var row1 = document.createElement("tr");
+                        var row2 = document.createElement("tr");
+                        var row3 = document.createElement("tr");
+                        var row4 = document.createElement("tr");
+                        var row5 = document.createElement("tr");
+                        var row6 = document.createElement("tr");
+                        var row7 = document.createElement("tr");
+
+                        //Adding columns per row (2 columns per row here)...
+                        var receiptCol1 = document.createElement("td");
+                        var receiptCol2 = document.createElement("td");
+                        //var col1 = document.createElement("td");
+                        //var col2 = document.createElement("td");
+                        var col3 = document.createElement("td");
+                        var col4 = document.createElement("td");
+                        var col5 = document.createElement("td");
+                        var col6 = document.createElement("td");
+                        var col7 = document.createElement("td");
+                        var col8 = document.createElement("td");
+                        var col9 = document.createElement("td");
+                        var col10 = document.createElement("td");
+                        var col11 = document.createElement("td");
+                        var col12 = document.createElement("td");
+                        var col13 = document.createElement("td");
+                        var col14 = document.createElement("td");
+
+
+                        //Add data to the new columns...
+
+                        let text = "CLICK TO VIEW RECEIPT";
+                        receiptCol1.innerHTML = text.fontcolor("green");
+
+                        //col1.innerText = "ID";
+                        //col2.innerText = item_snapshot.key;
+
+                        col3.innerText = "First Name";
+                        col4.innerText = item_snapshot.child("FirstName").val();
+
+                        col5.innerText = "Last Name";
+                        col6.innerText = item_snapshot.child("LastName").val();
+
+                        col7.innerText = "Phone Number";
+                        col8.innerText = item_snapshot.child("Tel").val();
+
+                        col9.innerText = "Address";
+                        col10.innerText = item_snapshot.child("Address").val();
+
+
+                        var test = item_snapshot.child("Link").val();
+                        col11.innerText = " ";
+                        col12.innerText = " ";
+                        
+
+                        //Append the cells into the row and the row into the table body.
+                        receiptRow.appendChild(receiptCol1);
+                        receiptRow.appendChild(receiptCol2);
+                        receiptRow.onclick = function(){
+                           window.open(test);
+                        }
+                        
+                        //row1.appendChild(col1);
+                        //row1.appendChild(col2);
+
+                        row2.appendChild(col3);
+                        row2.appendChild(col4);
+
+                        row3.appendChild(col5);
+                        row3.appendChild(col6);
+
+                        row4.appendChild(col7);
+                        row4.appendChild(col8);
+
+                        row5.appendChild(col9);
+                        row5.appendChild(col10);
+
+                        row6.appendChild(col11);
+                        row6.appendChild(col12);
+
+                        tableBody.appendChild(receiptRow);
+                        //tableBody.appendChild(row1);
+                        tableBody.appendChild(row2);
+                        tableBody.appendChild(row3);
+                        tableBody.appendChild(row4);
+                        tableBody.appendChild(row5);
+                        tableBody.appendChild(row6);
+
+                    });
+                });
+                 //End extracting and rendering of data here....
+            }
+
+
+            function createElement(){
+                let el = document.createElement('div');
+                let child = document.createElement('p');
+                el.appendChild(child);
+                return el;
+            }
+
+                        
+            
+        </script>
+
+    </body>
+
+</html>
