@@ -22,15 +22,7 @@
 
             .editText{height:10; font-size:16pt; width:200; border: 2px solid black; border-radius:10px; padding:20px; text-align:center}
 
-            table {
-                border: 0px solid #CCC;
-                border-collapse: collapse;
-            }
-
-            td {
-                border: none;
-                padding: 0;
-            }
+            
             
         </style>
 
@@ -52,57 +44,20 @@
 
     </head>
 
-    <body onload = "readData()">
+    <body style="background-color:rgb(193, 220, 230);" onload = "readData()">
 
 
         <table class="table" id="table">
-            <tr>
-                <td></td>
-            </tr>   
+            <tbody>
+                <tr>
+                    <td ></td>
+                </tr> 
+            </tbody>
         </table>
 
 
-        <br></br>
-        <center><b>OR</b></center>
-        <center>
-            <div class="col-md-6">
-                <hr></hr>
-            </div>
-        </center>
-        
-        
-        <center><h4 style="margin-top:100px;">Juice <img class="img-fluid paymentlogo"src="images/juiceLogo.png"/></h4>
-        <p style="font-size:15pt;  margin-bottom:50px; padding:5px;">Transfer to 
-        <br>Mobile Number on: 51234567</br>
-        In juice payment description write <b>the product name</b>
-
-        <form>
-            <p style="font-size:16pt;"><b>Fill the form for juice:</b></p>
-            
-            <label for="fileselect" style="font-size:16pt;">First Name:</label>
-            <input id="id_firstname" class="editText"	maxlength="15" type="text"/></form>
-
-            <br><label for="fileselect" style="font-size:16pt;">Last name:</label>
-            <input id="id_lastname" class="editText"	maxlength="15" type="text"/></form></br>
-
-            <br><label for="fileselect" style="font-size:16pt;">Phone number:</label>
-            <input id="id_tel" class="editText"	maxlength="8" type="text"/></form></br>
-
-            <br><label for="fileselect" style="font-size:16pt;">Address:</label>
-            <input id="id_address" class="editText"	maxlength="15" type="text"/></form></br>
-
-            <br>
-            <p>Upload transaction juice with description here.</p>
-            <img id="myimg"> <label id="upProgress"></label></br>
+       
     
-
-            <br>
-            <button id="select">Select Image</button>
-            <button id="upload">Send</button></br>
-
-        </form>
-
-        </p></center>
 
 
         <script id="MainScript">
@@ -135,84 +90,7 @@
             // Initialize Firebase...
             firebase.initializeApp(firebaseConfig);
 
-
-        //------------------------------------------SELECTION PROCESS-----------------------
-            document.getElementById("select").onclick = function(e){
-
-                var input = document.createElement('input');
-                input.type = 'file';
-
-                input.onchange = e =>{
-                    files = e.target.files;
-                    reader = new FileReader();
-                    reader.onload = function(){
-                        document.getElementById("myimg").src = reader.result;
-                    }
-                    reader.readAsDataURL(files[0]);
-                }
-                input.click();
-            }
-
-            //------------------------------------------UPLOAD PROCESS-----------------------
-                document.getElementById('upload').onclick = function(){
-                    firstname = document.getElementById("id_firstname").value;
-                    lastname = document.getElementById("id_lastname").value;
-                    tel = document.getElementById("id_tel").value;
-                    address = document.getElementById("id_address").value;
-
-                    var uploadTask = firebase.storage().ref('Images/' + ImgName + ".png").put(files[0]);
-
-
-                    uploadTask.on('state_changed', function(snapshot){
-                        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        document.getElementById('upProgress').innerHTML = 'Upload - ' + progress + '%';
-                    },
-                    
-                    function(error){
-                        alert('error in saving the image');
-                    },
-
-                    function(){
-                        uploadTask.snapshot.ref.getDownloadURL().then(function(url){
-                            ImgUrl = url;
-                        
-                            firebase.database().ref('Pictures/'+ id_number).set({
-                                FirstName: firstname,
-                                LastName: lastname,
-                                Tel: tel,
-                                Address: address,
-                                ID: id_number,
-                                Link: ImgUrl
-                            });
-
-                            firebase.database().ref('NUMBERS/ID_NUMBER').set({
-                                NUMBER: id_number
-                            });
-
-                
-                            nativeToast({
-                                message: 'Payment details was sent!',
-                                position: 'center',    
-                                rounded: true,
-                                timeout: 10000,
-                                type: '',
-                                icon: false,
-                                edge:true,
-                                closeOnClick: false,
-                                elements: [createElement()]
-                            });
-
-                            document.getElementById("id_firstname").value = " ";
-                            document.getElementById("id_lastname").value = " ";
-                            document.getElementById("id_tel").value = " ";
-                            document.getElementById("id_address").value = " ";
-                            document.getElementById('myimg').src = '//:0'
-
-
-                            }
-                         );
-                    });
-            }
+            
             
             
             //------------------------------------------LOAD ENTIRE DATABASE INTO A TABLE-----------------------
@@ -265,13 +143,17 @@
 
                         //Add data to the new columns...
 
-                        let text = "CLICK TO VIEW RECEIPT";
-                        receiptCol1.innerHTML = text.fontcolor("green");
+                        receiptCol1.innerHTML = "<strong>View receipt</strong> <img style='height:25px; width:25px; align:right; text-align:right;' src='images/arrow.png' />"
+                      
+
+                        style="border: 0px solid #000;"
 
                         //col1.innerText = "ID";
                         //col2.innerText = item_snapshot.key;
 
                         col3.innerText = "First Name";
+                        col3.innerHTML = "<span style='color:#000;'>First Name</span>";
+
                         col4.innerText = item_snapshot.child("FirstName").val();
 
                         col5.innerText = "Last Name";
@@ -295,6 +177,7 @@
                         receiptRow.onclick = function(){
                            window.open(test);
                         }
+
                         
                         //row1.appendChild(col1);
                         //row1.appendChild(col2);
@@ -328,12 +211,7 @@
             }
 
 
-            function createElement(){
-                let el = document.createElement('div');
-                let child = document.createElement('p');
-                el.appendChild(child);
-                return el;
-            }
+           
 
                         
             
