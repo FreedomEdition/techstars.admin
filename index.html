@@ -146,108 +146,75 @@
                         
                         //Adding rows...
                         var receiptRow = document.createElement("tr");
-                        //var row1 = document.createElement("tr");
                         var row2 = document.createElement("tr");
                         var row3 = document.createElement("tr");
                         var row4 = document.createElement("tr");
                         var row5 = document.createElement("tr");
-                        var row6 = document.createElement("tr");
-                        var row7 = document.createElement("tr");
 
-                        //Adding columns per row (2 columns per row here)...
-                        var receiptCol1 = document.createElement("td");
-                        var receiptCol2 = document.createElement("td");
-                        //var col1 = document.createElement("td");
-                        //var col2 = document.createElement("td");
+                        //Adding columns per row (1 column per row here)...
+                        var receiptCol = document.createElement("td");
+                        var col2 = document.createElement("td");
                         var col3 = document.createElement("td");
                         var col4 = document.createElement("td");
                         var col5 = document.createElement("td");
-                        var col6 = document.createElement("td");
-                        var col7 = document.createElement("td");
-                        var col8 = document.createElement("td");
-                        var col9 = document.createElement("td");
-                        var col10 = document.createElement("td");
-                        var col11 = document.createElement("td");
-                        var col12 = document.createElement("td");
-                        var col13 = document.createElement("td");
-                        var col14 = document.createElement("td");
-
+                       
 
                         //Add data to the new columns...
 
-                        receiptCol1.innerHTML = "<strong>View receipt</strong> <img style='height:25px; width:25px; align:right; text-align:right;' src='images/arrow.png'/>      <p id='hidden1' style='display:none'> <img style='height:520px; width:320px; align:right; text-align:right;' src='images/juicepayment.jpg'/></p>"
-                        
+                        receiptCol.innerHTML = "<strong>View receipt</strong> <img style='height:25px; width:25px; align:right; text-align:right;' src='images/arrow.png'/>      <p id='hidden1' style='display:none'> <img id='receiptimg' style='height:520px; width:320px; align:right; text-align:right;' src=''/></p>"
 
-                        //col1.innerText = "ID";
-                        //col2.innerText = item_snapshot.key;
+                        col2.innerText = "First Name: " + item_snapshot.child("FirstName").val();
 
-                        col3.innerText = "First Name";
-                        col3.innerHTML = "<span style='color:#000;'>First Name</span>";
+                        col3.innerText = "Last Name: " + item_snapshot.child("LastName").val();
 
-                        col4.innerText = item_snapshot.child("FirstName").val();
+                        col4.innerText = "Phone Number: " + item_snapshot.child("Tel").val();
 
-                        col5.innerText = "Last Name";
-                        col6.innerText = item_snapshot.child("LastName").val();
-
-                        col7.innerText = "Phone Number";
-                        col8.innerText = item_snapshot.child("Tel").val();
-
-                        col9.innerText = "Address";
-                        col10.innerText = item_snapshot.child("Address").val();
-
+                        col5.innerText = "Address: " + item_snapshot.child("Address").val();
 
                         var test = item_snapshot.child("Link").val();
-                        col11.innerText = " ";
-                        col12.innerText = " ";
                         
 
                         //Append the cells into the row and the row into the table body.
-                        receiptRow.appendChild(receiptCol1);
-                        receiptRow.appendChild(receiptCol2);
+                        receiptRow.appendChild(receiptCol);
                         receiptRow.onclick = function(){
-                           //window.open(test);
-                            document.getElementById('hidden1').style = "display:block; visibility: visible; "
+                            var displayStatus = document.getElementById("hidden1");
+                            //var displayStatus = receiptRow.style.src= test;
+
+                            if ( displayStatus.style.display == 'none' ){
+                            displayStatus.style.display = 'block';
+                            var _img = document.getElementById('receiptimg');
+                            var newImage = new Image();
+                            newImage.onload = function(){
+                                _img.src = this.src;
+                            }
+                            newImage.src = test;
+
+                            
+                            } else {
+                            displayStatus.style.display = 'none';
+                            }
                         }
                         
 
-                        
-                        //row1.appendChild(col1);
-                        //row1.appendChild(col2);
-
-                        row2.appendChild(col3);
-                        row2.appendChild(col4);
-
-                        row3.appendChild(col5);
-                        row3.appendChild(col6);
-
-                        row4.appendChild(col7);
-                        row4.appendChild(col8);
-
-                        row5.appendChild(col9);
-                        row5.appendChild(col10);
-
-                        row6.appendChild(col11);
-                        row6.appendChild(col12);
+                        row2.appendChild(col2);
+                        row3.appendChild(col3);
+                        row4.appendChild(col4);
+                        row5.appendChild(col5);
+                                                
 
                         tableBody.appendChild(receiptRow);
-                        //tableBody.appendChild(row1);
                         tableBody.appendChild(row2);
                         tableBody.appendChild(row3);
                         tableBody.appendChild(row4);
                         tableBody.appendChild(row5);
-                        tableBody.appendChild(row6);
 
                     });
                 });
                  //End extracting and rendering of data here....
             }
 
-
            
-
-            //SCRIPT FOR EXPAND AND COLLAPSE
-            
-                        
+                  
             
         </script>
 
